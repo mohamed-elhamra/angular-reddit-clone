@@ -1,6 +1,8 @@
+import { AuthService } from './../shared/auth.service';
 import { PasswordValidator } from './../../validator/password.validator';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SignupRequestPayload } from './signup-request.payload';
 
 @Component({
   selector: 'app-signup',
@@ -10,8 +12,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class SignupComponent implements OnInit {
 
   signUpForm: FormGroup;
+  signupRequestPayload: SignupRequestPayload;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder, private authService: AuthService) {
+    this.signupRequestPayload = {
+      userName: '',
+      password: '',
+      email: ''
+    };
+  }
 
   ngOnInit(): void {
     this.signUpForm = this.fb.group({
@@ -36,6 +45,16 @@ export class SignupComponent implements OnInit {
 
   get confirmPassword() {
     return this.signUpForm.get('confirmPassword');
+  }
+
+  signup() {
+    this.signupRequestPayload.userName = this.username.value;
+    this.signupRequestPayload.email = this.email.value;
+    this.signupRequestPayload.password = this.password.value;
+
+    this.authService.signup(this.signupRequestPayload).subscribe(data => {
+      console.log(data);
+    })
   }
 
 }
