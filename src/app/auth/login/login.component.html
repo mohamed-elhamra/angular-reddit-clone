@@ -1,0 +1,37 @@
+<div class="row">
+    <div class="col-5 offset-4 mt-3 mb-5">
+        <form [formGroup]="loginForm" (submit)="login()">
+            <fieldset>
+                <legend>Login</legend>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" name="email"
+                        formControlName="email" [class.is-invalid]="email.errors && email.touched" autofocus>
+                    <div *ngIf="email.errors && email.touched">
+                        <div class="text-danger" *ngIf="email.errors.required">
+                            Email is required
+                        </div>
+                        <div class="text-danger" *ngIf="email.errors.email">
+                            Email format is incorrect
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password1" placeholder="Password" name="password"
+                        formControlName="password" [class.is-invalid]="password.errors && password.touched">
+                    <div *ngIf="password.errors && password.touched">
+                        <div class="text-danger" *ngIf="password.errors.required">
+                            Password is required
+                        </div>
+                        <div class="text-danger" *ngIf="password.errors.minlength || password.errors.maxlength">
+                            Password must be between 4 and 12 characters
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block" [disabled]="loginForm.invalid">Submit</button>
+                <span class="form-text">New to Spring Reddit? <a routerLink="/sign-up">SIGN UP</a></span>
+            </fieldset>
+        </form>
+    </div>
+</div>

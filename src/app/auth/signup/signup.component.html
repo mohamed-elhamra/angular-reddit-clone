@@ -6,7 +6,7 @@
                 <div class="form-group">
                     <label for="username">User Name</label>
                     <input type="text" class="form-control" id="username" placeholder="User Name" name="username"
-                        formControlName="username" [class.is-invalid]="username.errors && username.touched">
+                        formControlName="username" [class.is-invalid]="username.errors && username.touched" autofocus>
                     <div *ngIf="username.errors && username.touched">
                         <div class="text-danger" *ngIf="username.errors.required">
                             User Name is required
@@ -52,7 +52,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block" [disabled]="signUpForm.invalid">Submit</button>
-                <span class="form-text">Existing user? <a routerLink="">Log In</a></span>
+                <span class="form-text">Existing user? <a routerLink="/login">Log In</a></span>
             </fieldset>
         </form>
     </div>
