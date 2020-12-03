@@ -3,6 +3,8 @@ import { PasswordValidator } from './../../validator/password.validator';
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SignupRequestPayload } from './signup-request.payload';
+import { ToastrService } from 'ngx-toastr';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-signup',
@@ -14,7 +16,11 @@ export class SignupComponent implements OnInit {
   signUpForm: FormGroup;
   signupRequestPayload: SignupRequestPayload;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {
+  constructor(
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private toastr: ToastrService,
+    private router: Router) {
     this.signupRequestPayload = {
       userName: '',
       password: '',
@@ -29,6 +35,8 @@ export class SignupComponent implements OnInit {
       password: ['', [Validators.required, Validators.minLength(4), Validators.maxLength(12)]],
       confirmPassword: ['', [Validators.required]]
     }, { validators: PasswordValidator });
+
+
   }
 
   get username() {
@@ -52,9 +60,11 @@ export class SignupComponent implements OnInit {
     this.signupRequestPayload.email = this.email.value;
     this.signupRequestPayload.password = this.password.value;
 
-    this.authService.signup(this.signupRequestPayload).subscribe(data => {
-      console.log(data);
-    })
+    this.authService.signup(this.signupRequestPayload).subscribe(() => {
+      this.router.navigate(['/login'], { queryParams: { registered: 'true' } });
+    }, () => {
+      this.toastr.error('Registration failed! Please try again');
+    });
   }
 
 }

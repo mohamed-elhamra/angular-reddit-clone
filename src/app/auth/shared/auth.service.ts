@@ -28,8 +28,10 @@ export class AuthService {
         this.localStorage.store('username', data.username);
         return true;
       }));
+  }
 
-
+  getJwtToken() {
+    return this.localStorage.retrieve('authenticationToken');
   }
 
 }
