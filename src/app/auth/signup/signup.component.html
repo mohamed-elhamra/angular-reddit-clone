@@ -1,1 +1,59 @@
-<h1>Machin</h1>
+<div class="row">
+    <div class="col-5 offset-4 mt-3 mb-5">
+        <form [formGroup]="signUpForm">
+            <fieldset>
+                <legend>Register</legend>
+                <div class="form-group">
+                    <label for="username">User Name</label>
+                    <input type="text" class="form-control" id="username" placeholder="User Name" name="username"
+                        formControlName="username" [class.is-invalid]="username.errors && username.touched">
+                    <div *ngIf="username.errors && username.touched">
+                        <div class="text-danger" *ngIf="username.errors.required">
+                            User Name is required
+                        </div>
+                        <div class="text-danger" *ngIf="username.errors.minlength || username.errors.maxlength">
+                            User Name must be between 4 and 12 characters
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email address</label>
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" name="email"
+                        formControlName="email" [class.is-invalid]="email.errors && email.touched">
+                    <div *ngIf="email.errors && email.touched">
+                        <div class="text-danger" *ngIf="email.errors.required">
+                            Email is required
+                        </div>
+                        <div class="text-danger" *ngIf="email.errors.email">
+                            Email format is incorrect
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" class="form-control" id="password1" placeholder="Password" name="password"
+                        formControlName="password" [class.is-invalid]="password.errors && password.touched">
+                    <div *ngIf="password.errors && password.touched">
+                        <div class="text-danger" *ngIf="password.errors.required">
+                            Password is required
+                        </div>
+                        <div class="text-danger" *ngIf="password.errors.minlength || password.errors.maxlength">
+                            Password must be between 4 and 12 characters
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="confirmPassword" placeholder="Confirm Password"
+                        name="confirmPassword" formControlName="confirmPassword"
+                        [class.is-invalid]="confirmPassword.errors && confirmPassword.touched">
+                    <div class="text-danger" *ngIf="signUpForm.getError('misMatch')">
+                        Passwords doesn't match
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Submit</button>
+                <span class="form-text">Existing user? <a routerLink="">Log In</a></span>
+            </fieldset>
+        </form>
+    </div>
+</div>
