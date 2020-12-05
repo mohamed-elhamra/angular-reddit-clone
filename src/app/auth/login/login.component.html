@@ -1,6 +1,15 @@
 <div class="row">
     <div class="col-5 offset-4 mt-3 mb-5">
         <form [formGroup]="loginForm" (submit)="login()">
+            <div class="text-danger" *ngIf="this.isError">
+                Login Failed. Please check your credentials and try again.
+            </div>
+            <div #div class="alert alert-dismissible alert-warning"
+                *ngIf="this.registerSuccessMessage !== undefined && this.registerSuccessMessage.length > 0">
+                <button type="button" class="close" data-dismiss="alert" (click)="hideDiv(div)">&times;</button>
+                <h4 class="alert-heading">Warning!</h4>
+                <p class="mb-0">{{ registerSuccessMessage }}</p>
+            </div>
             <fieldset>
                 <legend>Login</legend>
                 <div class="form-group">

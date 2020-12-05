@@ -4,9 +4,12 @@ import {
   HttpRequest,
   HttpHandler,
   HttpEvent,
-  HttpInterceptor
+  HttpInterceptor,
+  HttpErrorResponse
 } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { catchError, filter, switchMap, take } from 'rxjs/operators';
+import { LoginResponse } from '../auth/login/login-response.payload';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
@@ -14,19 +17,61 @@ export class TokenInterceptor implements HttpInterceptor {
   isTokenRefreshing = false;
   refreshTokenSubject: BehaviorSubject<any> = new BehaviorSubject(null);
 
-  constructor(private authService: AuthService) { }
+  constructor(public authService: AuthService) { }
 
-  intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const jwtToken = this.authService.getJwtToken();
-    if (jwtToken) {
-      this.addToken(request, jwtToken);
+  intercept(req: HttpRequest<any>, next: HttpHandler):
+    Observable<HttpEvent<any>> {
+
+    if (req.url.indexOf('refresh') !== -1 || req.url.indexOf('login') !== -1) {
+      return next.handle(req);
     }
-    return next.handle(request);
+    const jwtToken = this.authService.getJwtToken();
+
+    if (jwtToken) {
+      return next.handle(this.addToken(req, jwtToken)).pipe(catchError(error => {
+        if (error instanceof HttpErrorResponse
+          && error.status === 403) {
+          return this.handleAuthErrors(req, next);
+        } else {
+          return throwError(error);
+        }
+      }));
+    }
+    return next.handle(req);
+
   }
 
-  addToken(request: HttpRequest<any>, jwtToken: any) {
-    return request.clone({
-      headers: request.headers.set('Authorization', 'Bearer ' + jwtToken)
+  private handleAuthErrors(req: HttpRequest<any>, next: HttpHandler)
+    : Observable<HttpEvent<any>> {
+    if (!this.isTokenRefreshing) {
+      this.isTokenRefreshing = true;
+      this.refreshTokenSubject.next(null);
+
+      return this.authService.refreshToken().pipe(
+        switchMap((refreshTokenResponse: LoginResponse) => {
+          this.isTokenRefreshing = false;
+          this.refreshTokenSubject
+            .next(refreshTokenResponse.authenticationToken);
+          return next.handle(this.addToken(req,
+            refreshTokenResponse.authenticationToken));
+        })
+      )
+    } else {
+      return this.refreshTokenSubject.pipe(
+        filter(result => result !== null),
+        take(1),
+        switchMap((res) => {
+          return next.handle(this.addToken(req,
+            this.authService.getJwtToken()))
+        })
+      );
+    }
+  }
+
+  addToken(req: HttpRequest<any>, jwtToken: any) {
+    return req.clone({
+      headers: req.headers.set('Authorization',
+        'Bearer ' + jwtToken)
     });
   }
 }

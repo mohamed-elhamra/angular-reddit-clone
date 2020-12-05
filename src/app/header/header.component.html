@@ -13,7 +13,14 @@
     </span>
   </a>
 
-  <div class="collapse navbar-collapse" id="navbarColor01">
+  <div *ngIf="isLoggedIn" ngbDropdown class="float-right ml-auto">
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+      <button (click)="goToUserProfile()" ngbDropdownItem class="btn btn-info">Profile</button>
+      <button (click)=" logout()" ngbDropdownItem class="btn btn-danger">Logout</button>
+    </div>
+  </div>
+
+  <div class="collapse navbar-collapse" id="navbarColor01" *ngIf="!isLoggedIn">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <a class="nav-link" routerLink="/login">LOGIN</a>

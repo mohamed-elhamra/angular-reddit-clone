@@ -5,6 +5,7 @@ import { AuthService } from '../shared/auth.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { throwError } from 'rxjs';
+import Swal from 'sweetalert2/dist/sweetalert2.js';
 
 @Component({
   selector: 'app-login',
@@ -65,6 +66,10 @@ export class LoginComponent implements OnInit {
       this.isError = true;
       throwError(error);
     });
+  }
+
+  hideDiv(div) {
+    div.style.display = "none";
   }
 
 }
